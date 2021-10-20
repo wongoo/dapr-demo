@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package pay;
+
+option java_outer_classname = "PayProto";
+option java_package = "com.github.wongoo.dapr.pay.proto";
+
+// User Code definitions
+service PayService {
+  rpc Pay (PayRequest) returns (PayResponse) {}
+}
+
+message PayRequest {
+  string productId = 1;
+  uint32 count = 2;
+  double price = 3;
+  double amount = 4;
+  double discount = 5;
+}
+
+message PayResponse {
+  string code = 1;
+  string message = 2;
+}
