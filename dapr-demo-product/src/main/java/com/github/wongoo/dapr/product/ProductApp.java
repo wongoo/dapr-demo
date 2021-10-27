@@ -17,6 +17,7 @@
 
 package com.github.wongoo.dapr.product;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +32,7 @@ import java.util.Map;
  */
 @SpringBootApplication
 @RestController
+@Slf4j
 public class ProductApp {
 
     public static void main(String[] args) {
@@ -50,7 +52,7 @@ public class ProductApp {
         data.put("productId", productId);
         data.put("price", price);
 
-        System.out.printf("query product %s, price: %f\n", productId, price);
+        log.info("query product {}, price: {}", productId, price);
 
         return data;
     }

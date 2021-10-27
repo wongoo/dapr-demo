@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.github.wongoo.dapr.pay;
+package com.github.wongoo.dapr.bank;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
@@ -25,15 +25,15 @@ import lombok.extern.slf4j.Slf4j;
  * @author wongoo
  */
 @Slf4j
-public class PayApp {
+public class BankApp {
 
     public static void main(String[] args) throws Exception {
         startGrpc();
     }
 
     public static void startGrpc() throws Exception {
-        int port = 5052;
-        DaprPayService payService = new DaprPayService();
+        int port = 5053;
+        DaprBankService payService = new DaprBankService();
         Server server = ServerBuilder.forPort(port).addService(payService).build().start();
         log.info("Server: started listening on port {}", port);
 

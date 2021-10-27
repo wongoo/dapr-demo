@@ -11,14 +11,21 @@ service PayService {
 }
 
 message PayRequest {
-  string productId = 1;
-  uint32 count = 2;
-  double price = 3;
-  double amount = 4;
-  double discount = 5;
+  uint64 orderId = 1;
+  string productId = 2;
+  uint32 count = 3;
+  double price = 4;
+  double amount = 5;
+  double discount = 6;
 }
 
 message PayResponse {
   string code = 1;
   string message = 2;
+}
+
+message PayEvent {
+  uint64 orderId = 1;
+  uint32 status = 2;
+  string message = 3;
 }

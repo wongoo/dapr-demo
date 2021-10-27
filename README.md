@@ -1,11 +1,12 @@
+# Dapr Demo
 
-## prepare
+## 1. prepare
 
 The version of protocol buffer and grpc should match the dapr version:
 * protocol buffer version: 3.13.0
 * grpc version: 1.39.0
 
-1. install protoc
+### 1.1. install protoc
 ```bash
 # ref: https://google.github.io/proto-lens/installing-protoc.html
 # ---- mac
@@ -19,7 +20,7 @@ sudo chmod +x /usr/local/bin/protoc
 rm -f $PROTOC_ZIP
 ```
 
-2. install protoc-java-plugin
+### 1.2. install protoc-java-plugin
 ```bash
 # ref: https://github.com/grpc/grpc-java/tree/master/compiler
 # 1. Navigate to https://mvnrepository.com/artifact/io.grpc/protoc-gen-grpc-java
@@ -35,39 +36,33 @@ sudo mv protoc-gen-grpc-java-1.39.0-linux-x86_64.exe /usr/local/bin/protoc-gen-g
 sudo chmod +x /usr/local/bin/protoc-gen-grpc-java-1.39.0
 ```
 
-## generate grpc java code
+## 2. generate grpc java code
 
 ```bash
 make proto-gen
 ```
 
-## How to run demo
+## 3. How To Run
+
+### 3.1. run dapr demo in self host
 
 ```bash
-# run dapr-demo-order
-dapr run --app-id dapr-demo-order --app-port 5050 -- java -jar dapr-demo-order/target/dapr-demo-order-1.0.0-SNAPSHOT.jar
-
-# run dapr-demo-product
-dapr run --app-id dapr-demo-product --app-port 5051 -- java -jar dapr-demo-product/target/dapr-demo-product-1.0.0-SNAPSHOT.jar
-
-# run dapr-demo-pay
-dapr run --app-id dapr-demo-pay --app-port 5052 --app-protocol grpc -- java -jar dapr-demo-pay/target/dapr-demo-pay-1.0.0-SNAPSHOT.jar
-
-# check product service
-curl --location --request POST 'http://localhost:5051/get' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "productId": "123"
-}'
-
-# create order
-curl --location --request POST 'http://localhost:5050/create' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "productId": "123",
-    "count": 2
-}'
+# install dapr
+wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O - | /bin/bash
 
 
+dapr init
+dapr --version
+# CLI version: 1.4.0
+# Runtime version: 1.4.3
 
+
+docker ps
+# CONTAINER ID   IMAGE                    COMMAND                  CREATED         STATUS         PORTS                              NAMES
+# 0dda6684dc2e   openzipkin/zipkin        "/busybox/sh run.sh"     2 minutes ago   Up 2 minutes   9410/tcp, 0.0.0.0:9411->9411/tcp   dapr_zipkin
+# 9bf6ef339f50   redis                    "docker-entrypoint.s…"   2 minutes ago   Up 2 minutes   0.0.0.0:6379->6379/tcp             dapr_redis
+# 8d993e514150   daprio/dapr              "./placement"            2 minutes ago   Up 2 minutes   0.0.0.0:6050->50005/tcp            dapr_placement
+
+sh run-self-host.sh
 ```
+

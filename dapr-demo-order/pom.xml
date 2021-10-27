@@ -18,7 +18,11 @@
         </dependency>
         <dependency>
             <groupId>io.dapr</groupId>
-            <artifactId>dapr-sdk</artifactId>
+            <artifactId>dapr-sdk-springboot</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty</artifactId>
         </dependency>
         <dependency>
             <groupId>com.github.wongoo.dapr</groupId>

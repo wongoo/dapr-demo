@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>dapr-demo-pay</artifactId>
+    <artifactId>dapr-demo-bank</artifactId>
 
     <dependencies>
         <dependency>
@@ -19,6 +19,7 @@
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-netty</artifactId>
+            <version>${grpc.version}</version>
         </dependency>
         <dependency>
             <groupId>io.dapr</groupId>
@@ -27,6 +28,11 @@
         <dependency>
             <groupId>io.dapr</groupId>
             <artifactId>dapr-sdk-autogen</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -37,7 +43,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.github.wongoo.dapr.pay.PayApp</mainClass>
+                            <mainClass>com.github.wongoo.dapr.bank.BankApp</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

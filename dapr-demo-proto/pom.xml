@@ -12,6 +12,10 @@
     <artifactId>dapr-demo-proto</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>com.github.wongoo.dapr</groupId>
+            <artifactId>dapr-demo-util</artifactId>
+        </dependency>
         <dependency> <!-- necessary for Java 9+ -->
             <groupId>org.apache.tomcat</groupId>
             <artifactId>annotations-api</artifactId>

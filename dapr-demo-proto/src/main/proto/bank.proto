@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package bank;
+
+option java_outer_classname = "BankProto";
+option java_package = "com.github.wongoo.dapr.bank.proto";
+
+// User Code definitions
+service BankService {
+  rpc Trans (TransRequest) returns (TransResponse) {}
+}
+
+message TransRequest {
+  uint64 orderId = 1;
+  double amount = 2;
+}
+
+message TransResponse {
+  uint64 transId = 1;
+  uint64 orderId = 2;
+  string code = 3;
+  string message = 4;
+}
+
+message TransEvent {
+  uint64 transId = 1;
+  uint64 orderId = 2;
+  uint32 status = 3;
+  string message = 4;
+}

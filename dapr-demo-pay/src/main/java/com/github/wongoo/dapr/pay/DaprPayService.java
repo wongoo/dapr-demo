@@ -17,17 +17,72 @@
 
 package com.github.wongoo.dapr.pay;
 
+import com.github.wongoo.dapr.bank.proto.BankProto;
+import com.github.wongoo.dapr.pay.model.PayResult;
 import com.github.wongoo.dapr.pay.proto.PayProto;
+import com.github.wongoo.dapr.util.JsonSerializer;
 import com.google.protobuf.Any;
+import com.google.protobuf.ByteString;
+import com.google.protobuf.Empty;
 import com.google.protobuf.InvalidProtocolBufferException;
+import io.dapr.client.DaprClient;
+import io.dapr.client.DaprClientBuilder;
+import io.dapr.client.domain.CloudEvent;
+import io.dapr.client.domain.HttpExtension;
+import io.dapr.client.domain.Metadata;
+import io.dapr.client.domain.PublishEventRequest;
 import io.dapr.v1.AppCallbackGrpc;
 import io.dapr.v1.CommonProtos;
+import io.dapr.v1.DaprAppCallbackProtos;
 import io.grpc.stub.StreamObserver;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Map;
+import java.util.UUID;
+
+import static java.util.Collections.singletonMap;
 
 /**
  * @author wongoo
  */
+@Slf4j
 public class DaprPayService extends AppCallbackGrpc.AppCallbackImplBase {
+
+    private static final String MESSAGE_TTL_IN_SECONDS = "1000";
+    private static final Map<String, String> PUBLISH_METADATA =
+        singletonMap(Metadata.TTL_IN_SECONDS, MESSAGE_TTL_IN_SECONDS);
+
+    private static final String SERVICE_APP_ID_BANK = "dapr-demo-bank";
+
+    private static final String TOPIC_PAY_EVENT = "pay_event";
+    private static final String TOPIC_TRANS_EVENT = "trans_event";
+
+    private static final String PUBSUB_NAME = "pubsub";
+
+    JsonSerializer jsonSerializer = new JsonSerializer();
+    private final DaprClient daprClient;
+
+    public DaprPayService() {
+        this.daprClient = (new DaprClientBuilder()).withObjectSerializer(jsonSerializer).build();
+    }
+
+    /**
+     * tell dapr topics to subscribe
+     */
+    @Override
+    public void listTopicSubscriptions(Empty request,
+        StreamObserver<DaprAppCallbackProtos.ListTopicSubscriptionsResponse> responseObserver) {
+        DaprAppCallbackProtos.TopicSubscription topicSubscription =
+            DaprAppCallbackProtos.TopicSubscription.newBuilder().setTopic(TOPIC_TRANS_EVENT).setPubsubName(PUBSUB_NAME)
+                .build();
+
+        DaprAppCallbackProtos.ListTopicSubscriptionsResponse subscriptionsResponse =
+            DaprAppCallbackProtos.ListTopicSubscriptionsResponse.newBuilder().addSubscriptions(topicSubscription)
+                .build();
+
+        responseObserver.onNext(subscriptionsResponse);
+        responseObserver.onCompleted();
+    }
 
     /**
      * Server mode: this is the Dapr method to receive Invoke operations via Grpc.
@@ -55,9 +110,93 @@ public class DaprPayService extends AppCallbackGrpc.AppCallbackImplBase {
     }
 
     public PayProto.PayResponse pay(PayProto.PayRequest request) {
-        System.out.printf("pay request: productId: %s, price: %f, count: %d, amount: %f\n", request.getProductId(),
-            request.getPrice(), request.getCount(), request.getAmount());
+        log.info("pay request: orderId: {}, productId: {}, price: {}, count: {}, discount: {}, amount: {}",
+            request.getOrderId(), request.getProductId(), request.getPrice(), request.getCount(), request.getDiscount(),
+            request.getAmount());
 
-        return PayProto.PayResponse.newBuilder().setCode("0").setMessage("submit ok").build();
+        PayProto.PayEvent payingEvent =
+            PayProto.PayEvent.newBuilder().setOrderId(request.getOrderId()).setStatus(1).setMessage("paying 支付中")
+                .build();
+
+        publishRawEvent(payingEvent);
+
+        requestTrans(request);
+
+        return PayProto.PayResponse.newBuilder().setCode("0").setMessage("submit ok 已提交支付").build();
+    }
+
+    private void requestTrans(PayProto.PayRequest request) {
+        BankProto.TransRequest transRequest =
+            BankProto.TransRequest.newBuilder().setOrderId(request.getOrderId()).setAmount(request.getAmount()).build();
+
+        log.info("trans request: orderId: {}, amount: {}", transRequest.getOrderId(), transRequest.getAmount());
+
+        BankProto.TransResponse response =
+            daprClient.invokeMethod(SERVICE_APP_ID_BANK, "trans", transRequest, HttpExtension.NONE, null,
+                BankProto.TransResponse.class).block();
+
+        assert response != null;
+
+        log.info("trans response, code: {}, message: {}", response.getCode(), response.getMessage());
+    }
+
+    private void publishRawEvent(PayProto.PayEvent event) {
+        log.info("publish pay event, orderId: {}, status: {}, message: {}", event.getOrderId(), event.getStatus(),
+            event.getMessage());
+
+        /*
+         * event data will auto package with CloudEvent<?>
+         */
+        daprClient.publishEvent(PUBSUB_NAME, TOPIC_PAY_EVENT, event.toByteArray(), PUBLISH_METADATA).block();
+    }
+
+    private void publishPayResult(PayResult result) {
+        log.info("publish cloud event pay result, orderId: {}, code: {}, message: {}", result.getOrderId(),
+            result.getCode(), result.getMessage());
+
+        CloudEvent<PayResult> cloudEvent = new CloudEvent<>();
+        cloudEvent.setId(UUID.randomUUID().toString());
+        cloudEvent.setType("pay_result");
+        cloudEvent.setSpecversion("1");
+        cloudEvent.setDatacontenttype(CloudEvent.CONTENT_TYPE);
+        cloudEvent.setData(result);
+
+        //Publishing messages
+        daprClient.publishEvent(
+            new PublishEventRequest(PUBSUB_NAME, "pay_result", cloudEvent).setContentType(CloudEvent.CONTENT_TYPE)
+                .setMetadata(PUBLISH_METADATA)).block();
+    }
+
+    @Override
+    public void onTopicEvent(DaprAppCallbackProtos.TopicEventRequest request,
+        StreamObserver<DaprAppCallbackProtos.TopicEventResponse> responseObserver) {
+        try {
+            String topic = request.getTopic();
+            ByteString data = request.getData();
+            log.info("topic event, topic: {}, data: {}", topic, data);
+            switch (topic) {
+                case TOPIC_TRANS_EVENT:
+                    // BankProto.TransEvent transEvent =
+                    //    jsonSerializer.deserialize(data.toByteArray(), BankProto.TransEvent.class);
+                    BankProto.TransEvent transEvent = BankProto.TransEvent.newBuilder().setOrderId(1).build();
+                    processTransEvent(transEvent);
+                    break;
+                default:
+                    log.info("unknown message");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            responseObserver.onCompleted();
+        }
+    }
+
+    private void processTransEvent(BankProto.TransEvent event) {
+        log.info("receive trans event, transId: {}, status: {}, message: {}", event.getTransId(), event.getStatus(),
+            event.getMessage());
+
+        PayResult payResult =
+            PayResult.builder().orderId(event.getOrderId()).code(0).message("pay success 支付成功").build();
+        publishPayResult(payResult);
     }
 }
