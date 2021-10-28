@@ -9,13 +9,13 @@ dapr run --app-id dapr-demo-order --app-port 5050 \
   -- java -jar dapr-demo-order/target/dapr-demo-order-1.0.0-SNAPSHOT.jar > order.log &
 
 # run dapr-demo-product
-sleep 1
+sleep 3
 echo "---------> start dapr-demo-product"
 dapr run --app-id dapr-demo-product --app-port 5051 \
   -- java -jar dapr-demo-product/target/dapr-demo-product-1.0.0-SNAPSHOT.jar > product.log &
 
 # run dapr-demo-pay
-sleep 1
+sleep 3
 echo "---------> start dapr-demo-pay"
 dapr run --app-id dapr-demo-pay --app-port 5052 \
   --components-path ~/.dapr/components  \
@@ -23,14 +23,14 @@ dapr run --app-id dapr-demo-pay --app-port 5052 \
   -- java -jar dapr-demo-pay/target/dapr-demo-pay-1.0.0-SNAPSHOT.jar > pay.log &
 
 # run dapr-demo-bank
-sleep 1
+sleep 3
 echo "---------> start dapr-demo-bank"
 dapr run --app-id dapr-demo-bank --app-port 5053 \
   --components-path ~/.dapr/components  \
   --app-protocol grpc \
   -- java -jar dapr-demo-bank/target/dapr-demo-bank-1.0.0-SNAPSHOT.jar > bank.log &
 
-sleep 2
+sleep 3
 
 # check product service
 curl --location --request POST 'http://localhost:5051/get' \
@@ -47,15 +47,15 @@ curl --location --request POST 'http://localhost:5050/create' \
     "count": 2
 }'
 
-sleep 4
+sleep 5
 
-echo "---------------------- order log ----------------------"
-tail -n 10 order.log
 echo "---------------------- product log ----------------------"
-tail -n 10 product.log
+tail -n 20 product.log
 echo "---------------------- pay log ----------------------"
-tail -n 10 pay.log
+tail -n 40 pay.log
 echo "---------------------- bank log ----------------------"
-tail -n 10 bank.log
+tail -n 40 bank.log
+echo "---------------------- order log ----------------------"
+tail -n 20 order.log
 
 echo "over"

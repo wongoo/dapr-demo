@@ -18,7 +18,6 @@
 package com.github.wongoo.dapr.bank;
 
 import com.github.wongoo.dapr.bank.proto.BankProto;
-import com.github.wongoo.dapr.util.JsonSerializer;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Empty;
@@ -32,6 +31,7 @@ import io.dapr.v1.DaprAppCallbackProtos;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Base64;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -52,12 +52,6 @@ public class DaprBankService extends AppCallbackGrpc.AppCallbackImplBase {
     private static final String PUBSUB_NAME = "pubsub";
 
     AtomicLong transIdSequence = new AtomicLong(0);
-
-    private final DaprClient daprClient;
-
-    public DaprBankService() {
-        this.daprClient = (new DaprClientBuilder()).withObjectSerializer(new JsonSerializer()).build();
-    }
 
     /**
      * tell dapr topics to subscribe
@@ -109,9 +103,15 @@ public class DaprBankService extends AppCallbackGrpc.AppCallbackImplBase {
             }
 
             BankProto.TransEvent successEvent =
-                BankProto.TransEvent.newBuilder().setTransId(transId).setStatus(0).setMessage("trans success").build();
+                BankProto.TransEvent.newBuilder().setTransId(transId).setStatus(200).setMessage("trans success").build();
             publishEvent(successEvent);
         }).start();
+    }
+
+    private final DaprClient daprClient;
+
+    public DaprBankService() {
+        this.daprClient = (new DaprClientBuilder()).build();
     }
 
     private void publishEvent(BankProto.TransEvent event) {
@@ -122,8 +122,14 @@ public class DaprBankService extends AppCallbackGrpc.AppCallbackImplBase {
         log.info("publish trans event,data: {}", byteString);
 
         /*
+         * TODO: public proto Object will get error, so convert base64 string. SHOULD have better way.
+         */
+        String base64 = Base64.getEncoder().encodeToString(byteString.toByteArray());
+
+        /*
          * event data will auto package with CloudEvent<?>
          */
-        daprClient.publishEvent(PUBSUB_NAME, TOPIC_TRANS_EVENT, "ok", PUBLISH_METADATA).block();
+        daprClient.publishEvent(PUBSUB_NAME, TOPIC_TRANS_EVENT, base64, PUBLISH_METADATA).block();
     }
+
 }

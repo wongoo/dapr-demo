@@ -37,6 +37,7 @@ import io.dapr.v1.DaprAppCallbackProtos;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Base64;
 import java.util.Map;
 import java.util.UUID;
 
@@ -176,9 +177,12 @@ public class DaprPayService extends AppCallbackGrpc.AppCallbackImplBase {
             log.info("topic event, topic: {}, data: {}", topic, data);
             switch (topic) {
                 case TOPIC_TRANS_EVENT:
-                    // BankProto.TransEvent transEvent =
-                    //    jsonSerializer.deserialize(data.toByteArray(), BankProto.TransEvent.class);
-                    BankProto.TransEvent transEvent = BankProto.TransEvent.newBuilder().setOrderId(1).build();
+                    /*
+                     * TODO: public proto Object will get error, so convert base64 string. SHOULD have better way.
+                     */
+                    String base64 = jsonSerializer.deserialize(data.toByteArray(), String.class);
+                    byte[] decode = Base64.getDecoder().decode(base64.getBytes());
+                    BankProto.TransEvent transEvent = BankProto.TransEvent.parseFrom(decode);
                     processTransEvent(transEvent);
                     break;
                 default:
