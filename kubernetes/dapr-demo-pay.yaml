@@ -1,0 +1,42 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: dapr-demo-pay
+  labels:
+    app: dapr-demo-pay
+spec:
+  selector:
+    app: dapr-demo-pay
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5052
+  type: LoadBalancer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dapr-demo-pay
+  labels:
+    app: dapr-demo-pay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dapr-demo-pay
+  template:
+    metadata:
+      labels:
+        app: dapr-demo-pay
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "dapr-demo-pay"
+        dapr.io/app-port: "5052"
+    spec:
+      containers:
+        - name: dapr-demo-pay
+          image: dapr-demo-pay:v1.0.0
+          ports:
+            - containerPort: 5052
+          imagePullPolicy: Never

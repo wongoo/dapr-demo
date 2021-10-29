@@ -66,3 +66,112 @@ docker ps
 sh run-self-host.sh
 ```
 
+### 3.2. run dapr demo in kubernetes
+
+install tools:
+```bash
+# install kubectl
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+echo "$(<kubectl.sha256) kubectl" | sha256sum --check
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+kubectl version --client
+
+# install helm
+# find the latest version from https://mirrors.huaweicloud.com/helm
+wget https://mirrors.huaweicloud.com/helm/v3.7.1/helm-v3.7.1-linux-amd64.tar.gz
+tar -xvf helm-v3.7.1-linux-amd64.tar.gz
+mv linux-amd64/helm /usr/local/bin/
+
+# https://docs.dapr.io/operations/hosting/kubernetes/cluster/setup-minikube/
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+minikube config set vm-driver docker
+minikube start --cpus=4 --memory=4096
+```
+
+install dapr in kubernetes:
+```bash
+# ----------------------------------
+# install dapr cli using command (NOT required if already installed using helm)
+wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O - | /bin/bash
+# The -k flag initializes Dapr on the Kubernetes cluster in your current context.
+# Setup & configure mutual TLS: https://docs.dapr.io/operations/security/mtls/
+# If custom certificates have not been provided, Dapr will automatically create and persist self signed certs valid for one year. In Kubernetes, 
+# the certs are persisted to a secret that resides in the namespace of the Dapr system pods, accessible only to them.
+dapr init -k  --enable-mtls=false
+# Uninstall Dapr on Kubernetes with CLI  
+# dapr uninstall -k
+kubectl get pods --namespace dapr-system
+dapr status -k
+# ----------------------------------
+```
+
+install redis:
+```bash
+# Install Redis into your cluster
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+helm install redis bitnami/redis
+#    redis-master.default.svc.cluster.local for read/write operations (port 6379)
+#    redis-replicas.default.svc.cluster.local for read-only operations (port 6379)
+# export REDIS_PASSWORD=$(kubectl get secret --namespace default redis -o jsonpath="{.data.redis-password}" | base64 --decode)
+# see the Redis containers now running in your cluster
+kubectl get pods
+
+cat <<EOF > redis-state.yaml 
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: statestore
+  namespace: default
+spec:
+  type: state.redis
+  version: v1
+  metadata:
+  - name: redisHost
+    value: redis-master.default.svc.cluster.local:6379
+  - name: redisPassword
+    secretKeyRef:
+      name: redis
+      key: redis-password
+EOF
+
+
+cat <<EOF > redis-pubsub.yaml 
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: pubsub
+  namespace: default
+spec:
+  type: pubsub.redis
+  version: v1
+  metadata:
+  - name: redisHost
+    value: redis-master.default.svc.cluster.local:6379
+  - name: redisPassword
+    secretKeyRef:
+      name: redis
+      key: redis-password
+EOF
+
+kubectl apply -f redis-state.yaml
+kubectl apply -f redis-pubsub.yaml
+
+```
+
+build demo docker images:
+```bash
+
+# use minikube docker registry
+eval $(minikube -p minikube docker-env)
+# build project images
+make build-docker
+```
+
+run demo in kubernetes:
+```bash
+sh run-in-kubernetes.sh
+```
+

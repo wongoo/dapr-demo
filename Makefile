@@ -17,3 +17,18 @@ proto-gen:
 
 run-self-host:
 	sh ./run-self-host.sh
+
+define buildDockerImage
+	cp $(1)/target/$(1)-1.0.0-SNAPSHOT.jar app.jar
+	docker build -f docker/Dockerfile . -t $(1):v1.0.0
+	rm -f app.jar
+endef
+
+build-docker:
+	$(call buildDockerImage,dapr-demo-product)
+	$(call buildDockerImage,dapr-demo-order)
+	$(call buildDockerImage,dapr-demo-pay)
+	$(call buildDockerImage,dapr-demo-bank)
+
+	# delete override images
+	docker images |grep "<none>" |awk '{print $3}'  |xargs --no-run-if-empty docker image rm --force

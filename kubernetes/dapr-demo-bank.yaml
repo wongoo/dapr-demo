@@ -1,0 +1,43 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: dapr-demo-bank
+  labels:
+    app: dapr-demo-bank
+spec:
+  selector:
+    app: dapr-demo-bank
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5053
+  type: LoadBalancer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dapr-demo-bank
+  labels:
+    app: dapr-demo-bank
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dapr-demo-bank
+  template:
+    metadata:
+      labels:
+        app: dapr-demo-bank
+      # https://docs.dapr.io/reference/arguments-annotations-overview/
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "dapr-demo-bank"
+        dapr.io/app-port: "5053"
+    spec:
+      containers:
+        - name: dapr-demo-bank
+          image: dapr-demo-bank:v1.0.0
+          ports:
+            - containerPort: 5053
+          imagePullPolicy: Never

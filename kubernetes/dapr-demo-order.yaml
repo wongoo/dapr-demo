@@ -1,0 +1,42 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: dapr-demo-order
+  labels:
+    app: dapr-demo-order
+spec:
+  selector:
+    app: dapr-demo-order
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5050
+  type: LoadBalancer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dapr-demo-order
+  labels:
+    app: dapr-demo-order
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dapr-demo-order
+  template:
+    metadata:
+      labels:
+        app: dapr-demo-order
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "dapr-demo-order"
+        dapr.io/app-port: "5050"
+    spec:
+      containers:
+        - name: dapr-demo-order
+          image: dapr-demo-order:v1.0.0
+          ports:
+            - containerPort: 5050
+          imagePullPolicy: Never

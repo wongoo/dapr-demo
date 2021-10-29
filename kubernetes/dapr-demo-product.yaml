@@ -1,0 +1,42 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: dapr-demo-product
+  labels:
+    app: dapr-demo-product
+spec:
+  selector:
+    app: dapr-demo-product
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5051
+  type: LoadBalancer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dapr-demo-product
+  labels:
+    app: dapr-demo-product
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dapr-demo-product
+  template:
+    metadata:
+      labels:
+        app: dapr-demo-product
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "dapr-demo-product"
+        dapr.io/app-port: "5051"
+    spec:
+      containers:
+        - name: dapr-demo-product
+          image: dapr-demo-product:v1.0.0
+          ports:
+            - containerPort: 5051
+          imagePullPolicy: Never
