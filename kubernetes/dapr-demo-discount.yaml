@@ -1,0 +1,43 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: dapr-demo-discount
+  labels:
+    app: dapr-demo-discount
+spec:
+  selector:
+    app: dapr-demo-discount
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5054
+  type: LoadBalancer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dapr-demo-discount
+  labels:
+    app: dapr-demo-discount
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dapr-demo-discount
+  template:
+    metadata:
+      labels:
+        app: dapr-demo-discount
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "dapr-demo-discount"
+        dapr.io/app-port: "5054"
+        dapr.io/app-protocol: "grpc"
+    spec:
+      containers:
+        - name: dapr-demo-discount
+          image: dapr-demo-discount:v1.0.0
+          ports:
+            - containerPort: 5054
+          imagePullPolicy: Never

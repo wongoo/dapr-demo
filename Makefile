@@ -37,4 +37,4 @@ build-docker: build-golang-docker
 	$(call buildDockerImage,dapr-demo-bank)
 
 	# delete override images
-	docker images |grep "<none>" |awk '{print $3}'  |xargs --no-run-if-empty docker image rm --force
+	docker images |grep "<none>" |awk '{print $$3}'  |xargs --no-run-if-empty docker image rm --force
