@@ -18,13 +18,19 @@ proto-gen:
 run-self-host:
 	sh ./run-self-host.sh
 
+build-golang-docker:
+	cd dapr-demo-discount && GOOS=linux go build -o ../main discount.go
+	docker build -f docker/Dockerfile-golang . -t dapr-demo-discount:v1.0.0
+	rm -f main
+
 define buildDockerImage
 	cp $(1)/target/$(1)-1.0.0-SNAPSHOT.jar app.jar
 	docker build -f docker/Dockerfile . -t $(1):v1.0.0
 	rm -f app.jar
 endef
 
-build-docker:
+build-docker: build-golang-docker
+	mvn clean package
 	$(call buildDockerImage,dapr-demo-product)
 	$(call buildDockerImage,dapr-demo-order)
 	$(call buildDockerImage,dapr-demo-pay)

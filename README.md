@@ -1,5 +1,32 @@
 # Dapr Demo
 
+## 1. Demo Services
+
+1. **dapr-demo-proto**: protocol buffer definition, contains the generated code.
+
+2. **dapr-demo-order**: product java service, serve on 5050
+  - provide http method `/create` to create a new order.
+    - request dapr-demo-product http `/get` to query product service
+    - request dapr-demo-pay grpc `pay` to pay order
+  - listen topic `pay_event` in raw data format
+  - listen topic `pay_result` in CloudEvent format
+
+4. **dapr-demo-product**: product java service, serve on 5051
+   - provide http method `/get` to response product price.
+
+5. **dapr-demo-pay**: pay java service, serve on 5052
+  - provide grpc `pay` method to pay an order
+    - publish `paying` event to topic `pay_event`
+    - request dapr-demo-bank grpc `trans` to finish a pay transaction
+  - listen topic `trans_event`
+    - publish `success` event to topic `pay_result`
+
+6. **dapr-demo-bank**: bank java service, serve on 5053
+  - provide grpc `trans` method to finish a pay transaction
+    - publish `success` event to topic `trans_event`
+
+7. **dapr-demo-discount**: discount golang service, serve on 5054
+
 ## 1. prepare
 
 The version of protocol buffer and grpc should match the dapr version, 

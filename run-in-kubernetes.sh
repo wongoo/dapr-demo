@@ -1,5 +1,6 @@
 
 kubectl apply -f kubernetes/dapr-demo-product.yaml
+kubectl apply -f kubernetes/dapr-demo-discount.yaml
 kubectl apply -f kubernetes/dapr-demo-order.yaml
 kubectl apply -f kubernetes/dapr-demo-pay.yaml
 kubectl apply -f kubernetes/dapr-demo-bank.yaml
@@ -30,6 +31,8 @@ sleep 5
 
 echo "---------------------- product log ----------------------"
 kubectl logs --tail 100 -f $(kubectl get pods |grep dapr-demo-product | awk '{print $1}') dapr-demo-product
+echo "---------------------- discount log ----------------------"
+kubectl logs --tail 100 -f $(kubectl get pods |grep dapr-demo-discount | awk '{print $1}') dapr-demo-discount
 echo "---------------------- pay log ----------------------"
 kubectl logs --tail 100 -f $(kubectl get pods |grep dapr-demo-pay | awk '{print $1}') dapr-demo-pay
 echo "---------------------- bank log ----------------------"
@@ -37,7 +40,8 @@ kubectl logs --tail 100 -f $(kubectl get pods |grep dapr-demo-bank | awk '{print
 echo "---------------------- order log ----------------------"
 kubectl logs --tail 100 -f $(kubectl get pods |grep dapr-demo-order | awk '{print $1}') dapr-demo-order
 
-kubectl delete -f kubernetes/dapr-demo-product.yaml
 kubectl delete -f kubernetes/dapr-demo-order.yaml
 kubectl delete -f kubernetes/dapr-demo-pay.yaml
 kubectl delete -f kubernetes/dapr-demo-bank.yaml
+kubectl delete -f kubernetes/dapr-demo-discount.yaml
+kubectl delete -f kubernetes/dapr-demo-product.yaml

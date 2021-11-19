@@ -156,7 +156,7 @@ public class OrderApp {
     @Topic(name = "pay_result", pubsubName = "pubsub")
     @PostMapping(path = "/pay_result")
     public Mono<Void> handlePayResult(@RequestBody(required = false) CloudEvent<PayResult> cloudEvent) {
-        log.info("receive raw pay result");
+        log.info("receive pay result");
         return Mono.fromRunnable(() -> {
             try {
                 PayResult result = cloudEvent.getData();
