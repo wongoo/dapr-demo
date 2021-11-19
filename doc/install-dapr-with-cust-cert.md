@@ -69,4 +69,7 @@ helm install \
   dapr/dapr
 
 kubectl get configurations/daprsystem --namespace dapr-system -o yaml
+
+# uninstall
+# helm uninstall --namespace dapr-system dapr
 ```

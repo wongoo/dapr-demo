@@ -34,6 +34,7 @@ spec:
         dapr.io/enabled: "true"
         dapr.io/app-id: "dapr-demo-bank"
         dapr.io/app-port: "5053"
+        dapr.io/app-protocol: "grpc"
     spec:
       containers:
         - name: dapr-demo-bank

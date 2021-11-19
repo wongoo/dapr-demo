@@ -33,6 +33,7 @@ spec:
         dapr.io/enabled: "true"
         dapr.io/app-id: "dapr-demo-product"
         dapr.io/app-port: "5051"
+        dapr.io/app-protocol: "http"
     spec:
       containers:
         - name: dapr-demo-product

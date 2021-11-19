@@ -29,10 +29,12 @@ spec:
     metadata:
       labels:
         app: dapr-demo-pay
+      # https://docs.dapr.io/reference/arguments-annotations-overview/
       annotations:
         dapr.io/enabled: "true"
         dapr.io/app-id: "dapr-demo-pay"
         dapr.io/app-port: "5052"
+        dapr.io/app-protocol: "grpc"
     spec:
       containers:
         - name: dapr-demo-pay

@@ -2,7 +2,9 @@
 
 ## 1. prepare
 
-The version of protocol buffer and grpc should match the dapr version:
+The version of protocol buffer and grpc should match the dapr version, 
+which can be found at https://github.com/dapr/java-sdk/blob/master/pom.xml.
+
 * protocol buffer version: 3.13.0
 * grpc version: 1.39.0
 
@@ -53,7 +55,7 @@ wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O 
 
 dapr init
 dapr --version
-# CLI version: 1.4.0
+# CLI version: 1.5.0
 # Runtime version: 1.4.3
 
 
@@ -106,6 +108,8 @@ kubectl get pods --namespace dapr-system
 dapr status -k
 # ----------------------------------
 ```
+
+[install dapr in kubernetes using helm](doc/install-dapr-in-kubernetes-using-helm.md) 
 
 install redis:
 ```bash
