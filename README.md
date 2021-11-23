@@ -27,7 +27,8 @@
 
 7. **dapr-demo-discount**: discount golang service, serve on 5054
 
-## 1. prepare
+
+## 2. prepare
 
 The version of protocol buffer and grpc should match the dapr version, 
 which can be found at https://github.com/dapr/java-sdk/blob/master/pom.xml.
@@ -35,7 +36,7 @@ which can be found at https://github.com/dapr/java-sdk/blob/master/pom.xml.
 * protocol buffer version: 3.13.0
 * grpc version: 1.39.0
 
-### 1.1. install protoc
+### 2.1. install protoc
 ```bash
 # ref: https://google.github.io/proto-lens/installing-protoc.html
 # ---- mac
@@ -49,7 +50,7 @@ sudo chmod +x /usr/local/bin/protoc
 rm -f $PROTOC_ZIP
 ```
 
-### 1.2. install protoc-java-plugin
+### 2.2. install protoc-java-plugin
 ```bash
 # ref: https://github.com/grpc/grpc-java/tree/master/compiler
 # 1. Navigate to https://mvnrepository.com/artifact/io.grpc/protoc-gen-grpc-java
@@ -65,15 +66,20 @@ sudo mv protoc-gen-grpc-java-1.39.0-linux-x86_64.exe /usr/local/bin/protoc-gen-g
 sudo chmod +x /usr/local/bin/protoc-gen-grpc-java-1.39.0
 ```
 
-## 2. generate grpc java code
+### 2.2. install protoc-golang-plugin
+```bash
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+```
+
+## 3. generate grpc java code
 
 ```bash
 make proto-gen
 ```
 
-## 3. How To Run
+## 4. How To Run
 
-### 3.1. run dapr demo in self host
+### 4.1. run dapr demo in self host
 
 ```bash
 # install dapr
@@ -92,10 +98,12 @@ docker ps
 # 9bf6ef339f50   redis                    "docker-entrypoint.s…"   2 minutes ago   Up 2 minutes   0.0.0.0:6379->6379/tcp             dapr_redis
 # 8d993e514150   daprio/dapr              "./placement"            2 minutes ago   Up 2 minutes   0.0.0.0:6050->50005/tcp            dapr_placement
 
+make build-golang build-java
+
 sh run-self-host.sh
 ```
 
-### 3.2. run dapr demo in kubernetes
+### 4.2. run dapr demo in kubernetes
 
 install tools:
 ```bash

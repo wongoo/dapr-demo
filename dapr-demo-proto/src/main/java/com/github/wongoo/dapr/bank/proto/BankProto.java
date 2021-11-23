@@ -25,10 +25,10 @@ public final class BankProto {
     long getOrderId();
 
     /**
-     * <code>double amount = 2;</code>
+     * <code>uint64 amount = 2;</code>
      * @return The amount.
      */
-    double getAmount();
+    long getAmount();
   }
   /**
    * Protobuf type {@code bank.TransRequest}
@@ -80,9 +80,9 @@ public final class BankProto {
               orderId_ = input.readUInt64();
               break;
             }
-            case 17: {
+            case 16: {
 
-              amount_ = input.readDouble();
+              amount_ = input.readUInt64();
               break;
             }
             default: {
@@ -129,13 +129,13 @@ public final class BankProto {
     }
 
     public static final int AMOUNT_FIELD_NUMBER = 2;
-    private double amount_;
+    private long amount_;
     /**
-     * <code>double amount = 2;</code>
+     * <code>uint64 amount = 2;</code>
      * @return The amount.
      */
     @java.lang.Override
-    public double getAmount() {
+    public long getAmount() {
       return amount_;
     }
 
@@ -156,8 +156,8 @@ public final class BankProto {
       if (orderId_ != 0L) {
         output.writeUInt64(1, orderId_);
       }
-      if (amount_ != 0D) {
-        output.writeDouble(2, amount_);
+      if (amount_ != 0L) {
+        output.writeUInt64(2, amount_);
       }
       unknownFields.writeTo(output);
     }
@@ -172,9 +172,9 @@ public final class BankProto {
         size += com.google.protobuf.CodedOutputStream
           .computeUInt64Size(1, orderId_);
       }
-      if (amount_ != 0D) {
+      if (amount_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(2, amount_);
+          .computeUInt64Size(2, amount_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -193,9 +193,8 @@ public final class BankProto {
 
       if (getOrderId()
           != other.getOrderId()) return false;
-      if (java.lang.Double.doubleToLongBits(getAmount())
-          != java.lang.Double.doubleToLongBits(
-              other.getAmount())) return false;
+      if (getAmount()
+          != other.getAmount()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -212,7 +211,7 @@ public final class BankProto {
           getOrderId());
       hash = (37 * hash) + AMOUNT_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          java.lang.Double.doubleToLongBits(getAmount()));
+          getAmount());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -348,7 +347,7 @@ public final class BankProto {
         super.clear();
         orderId_ = 0L;
 
-        amount_ = 0D;
+        amount_ = 0L;
 
         return this;
       }
@@ -429,7 +428,7 @@ public final class BankProto {
         if (other.getOrderId() != 0L) {
           setOrderId(other.getOrderId());
         }
-        if (other.getAmount() != 0D) {
+        if (other.getAmount() != 0L) {
           setAmount(other.getAmount());
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -492,33 +491,33 @@ public final class BankProto {
         return this;
       }
 
-      private double amount_ ;
+      private long amount_ ;
       /**
-       * <code>double amount = 2;</code>
+       * <code>uint64 amount = 2;</code>
        * @return The amount.
        */
       @java.lang.Override
-      public double getAmount() {
+      public long getAmount() {
         return amount_;
       }
       /**
-       * <code>double amount = 2;</code>
+       * <code>uint64 amount = 2;</code>
        * @param value The amount to set.
        * @return This builder for chaining.
        */
-      public Builder setAmount(double value) {
+      public Builder setAmount(long value) {
         
         amount_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>double amount = 2;</code>
+       * <code>uint64 amount = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearAmount() {
         
-        amount_ = 0D;
+        amount_ = 0L;
         onChanged();
         return this;
       }
@@ -2241,7 +2240,7 @@ public final class BankProto {
     java.lang.String[] descriptorData = {
       "\n)dapr-demo-proto/src/main/proto/bank.pr" +
       "oto\022\004bank\"/\n\014TransRequest\022\017\n\007orderId\030\001 \001" +
-      "(\004\022\016\n\006amount\030\002 \001(\001\"P\n\rTransResponse\022\017\n\007t" +
+      "(\004\022\016\n\006amount\030\002 \001(\004\"P\n\rTransResponse\022\017\n\007t" +
       "ransId\030\001 \001(\004\022\017\n\007orderId\030\002 \001(\004\022\014\n\004code\030\003 " +
       "\001(\t\022\017\n\007message\030\004 \001(\t\"O\n\nTransEvent\022\017\n\007tr" +
       "ansId\030\001 \001(\004\022\017\n\007orderId\030\002 \001(\004\022\016\n\006status\030\003" +

@@ -18,6 +18,7 @@
 package com.github.wongoo.dapr.order;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.wongoo.dapr.discount.proto.DiscountProto;
 import com.github.wongoo.dapr.pay.model.PayResult;
 import com.github.wongoo.dapr.pay.proto.PayProto;
 import io.dapr.Topic;
@@ -66,15 +67,17 @@ public class OrderApp {
 
         log.info("create order, orderId: {}, productId: {}, count: {}", orderId, productId, count);
 
-        double productPrice = getProductPrice(productId);
+        long productPrice = getProductPrice(productId);
+        long discount = getDiscount(productId, productPrice, count);
 
-        pay(orderId, productId, productPrice, count);
+        pay(orderId, productId, productPrice, count, discount);
 
         return "ok";
     }
 
     private static final String SERVICE_APP_ID_PRODUCT = "dapr-demo-product";
     private static final String SERVICE_APP_ID_PAY = "dapr-demo-pay";
+    private static final String SERVICE_APP_ID_DISCOUNT = "dapr-demo-discount";
 
     DaprClient daprClient;
 
@@ -83,7 +86,7 @@ public class OrderApp {
         daprClient = (new DaprClientBuilder()).build();
     }
 
-    public double getProductPrice(String productId) {
+    public long getProductPrice(String productId) {
         Map<String, Object> request = new HashMap<>(1);
         request.put("productId", productId);
 
@@ -92,16 +95,34 @@ public class OrderApp {
                 .block();
 
         assert response != null;
-        double price = (double)response.get("price");
+        long price = (long)response.get("price");
 
         log.info("product {}, price: {}", productId, price);
 
         return price;
     }
 
-    public void pay(long orderId, String productId, double price, int count) {
-        double discount = 0.12;
-        double amount = price * count - discount;
+    private long getDiscount(String productId, long productPrice, int count) {
+        DiscountProto.DiscountRequest request =
+            DiscountProto.DiscountRequest.newBuilder().setProductId(productId).setCount(count).setPrice(productPrice)
+                .build();
+
+        log.info("discount request:  productId: {}, price: {}, count: {}", request.getProductId(), request.getPrice(),
+            request.getCount());
+
+        DiscountProto.DiscountResponse response =
+            daprClient.invokeMethod(SERVICE_APP_ID_DISCOUNT, "calc", request, HttpExtension.NONE, null,
+                DiscountProto.DiscountResponse.class).block();
+
+        assert response != null;
+
+        log.info("discount response, code: {}, message: {}, discount: {}", response.getCode(), response.getMessage(),
+            response.getDiscount());
+        return response.getDiscount();
+    }
+
+    public void pay(long orderId, String productId, long price, int count, long discount) {
+        long amount = price * count - discount;
 
         PayProto.PayRequest request =
             PayProto.PayRequest.newBuilder().setOrderId(orderId).setProductId(productId).setCount(count).setPrice(price)

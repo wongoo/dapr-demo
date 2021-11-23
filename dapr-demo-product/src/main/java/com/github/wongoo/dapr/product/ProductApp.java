@@ -46,7 +46,7 @@ public class ProductApp {
     public Map<String, Object> queryProduct(@RequestBody Map<String, Object> request) {
         String productId = (String)request.get("productId");
 
-        double price = 125.99;
+        long price = 125.99;
 
         Map<String, Object> data = new HashMap<>(4);
         data.put("productId", productId);

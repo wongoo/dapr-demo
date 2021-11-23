@@ -30,6 +30,14 @@ dapr run --app-id dapr-demo-bank --app-port 5053 \
   --app-protocol grpc \
   -- java -jar dapr-demo-bank/target/dapr-demo-bank-1.0.0-SNAPSHOT.jar > bank.log &
 
+# run dapr-demo-discount
+sleep 3
+echo "---------> start dapr-demo-discount"
+dapr run --app-id dapr-demo-discount --app-port 5054 \
+  --components-path ~/.dapr/components  \
+  --app-protocol grpc \
+  -- dapr-demo-discount/target/discount > discount.log &
+
 sleep 3
 
 # check product service

@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package discount;
+
+option java_outer_classname = "DiscountProto";
+option java_package = "com.github.wongoo.dapr.discount.proto";
+option go_package = "/discount_proto";
+
+// User Code definitions
+service DiscountService {
+  rpc Discount (DiscountRequest) returns (DiscountResponse) {}
+}
+
+message DiscountRequest {
+  string productId = 1;
+  uint64 price = 2;
+  uint64 count = 3;
+}
+
+message DiscountResponse {
+  uint64 discount = 1;
+  string code = 3;
+  string message = 4;
+}

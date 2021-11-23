@@ -12,7 +12,7 @@ service BankService {
 
 message TransRequest {
   uint64 orderId = 1;
-  double amount = 2;
+  uint64 amount = 2;
 }
 
 message TransResponse {

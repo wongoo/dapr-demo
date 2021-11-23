@@ -43,22 +43,22 @@ public final class PayProto {
     int getCount();
 
     /**
-     * <code>double price = 4;</code>
+     * <code>uint64 price = 4;</code>
      * @return The price.
      */
-    double getPrice();
+    long getPrice();
 
     /**
-     * <code>double amount = 5;</code>
+     * <code>uint64 amount = 5;</code>
      * @return The amount.
      */
-    double getAmount();
+    long getAmount();
 
     /**
-     * <code>double discount = 6;</code>
+     * <code>uint64 discount = 6;</code>
      * @return The discount.
      */
-    double getDiscount();
+    long getDiscount();
   }
   /**
    * Protobuf type {@code pay.PayRequest}
@@ -122,19 +122,19 @@ public final class PayProto {
               count_ = input.readUInt32();
               break;
             }
-            case 33: {
+            case 32: {
 
-              price_ = input.readDouble();
+              price_ = input.readUInt64();
               break;
             }
-            case 41: {
+            case 40: {
 
-              amount_ = input.readDouble();
+              amount_ = input.readUInt64();
               break;
             }
-            case 49: {
+            case 48: {
 
-              discount_ = input.readDouble();
+              discount_ = input.readUInt64();
               break;
             }
             default: {
@@ -230,35 +230,35 @@ public final class PayProto {
     }
 
     public static final int PRICE_FIELD_NUMBER = 4;
-    private double price_;
+    private long price_;
     /**
-     * <code>double price = 4;</code>
+     * <code>uint64 price = 4;</code>
      * @return The price.
      */
     @java.lang.Override
-    public double getPrice() {
+    public long getPrice() {
       return price_;
     }
 
     public static final int AMOUNT_FIELD_NUMBER = 5;
-    private double amount_;
+    private long amount_;
     /**
-     * <code>double amount = 5;</code>
+     * <code>uint64 amount = 5;</code>
      * @return The amount.
      */
     @java.lang.Override
-    public double getAmount() {
+    public long getAmount() {
       return amount_;
     }
 
     public static final int DISCOUNT_FIELD_NUMBER = 6;
-    private double discount_;
+    private long discount_;
     /**
-     * <code>double discount = 6;</code>
+     * <code>uint64 discount = 6;</code>
      * @return The discount.
      */
     @java.lang.Override
-    public double getDiscount() {
+    public long getDiscount() {
       return discount_;
     }
 
@@ -285,14 +285,14 @@ public final class PayProto {
       if (count_ != 0) {
         output.writeUInt32(3, count_);
       }
-      if (price_ != 0D) {
-        output.writeDouble(4, price_);
+      if (price_ != 0L) {
+        output.writeUInt64(4, price_);
       }
-      if (amount_ != 0D) {
-        output.writeDouble(5, amount_);
+      if (amount_ != 0L) {
+        output.writeUInt64(5, amount_);
       }
-      if (discount_ != 0D) {
-        output.writeDouble(6, discount_);
+      if (discount_ != 0L) {
+        output.writeUInt64(6, discount_);
       }
       unknownFields.writeTo(output);
     }
@@ -314,17 +314,17 @@ public final class PayProto {
         size += com.google.protobuf.CodedOutputStream
           .computeUInt32Size(3, count_);
       }
-      if (price_ != 0D) {
+      if (price_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(4, price_);
+          .computeUInt64Size(4, price_);
       }
-      if (amount_ != 0D) {
+      if (amount_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(5, amount_);
+          .computeUInt64Size(5, amount_);
       }
-      if (discount_ != 0D) {
+      if (discount_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(6, discount_);
+          .computeUInt64Size(6, discount_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -347,15 +347,12 @@ public final class PayProto {
           .equals(other.getProductId())) return false;
       if (getCount()
           != other.getCount()) return false;
-      if (java.lang.Double.doubleToLongBits(getPrice())
-          != java.lang.Double.doubleToLongBits(
-              other.getPrice())) return false;
-      if (java.lang.Double.doubleToLongBits(getAmount())
-          != java.lang.Double.doubleToLongBits(
-              other.getAmount())) return false;
-      if (java.lang.Double.doubleToLongBits(getDiscount())
-          != java.lang.Double.doubleToLongBits(
-              other.getDiscount())) return false;
+      if (getPrice()
+          != other.getPrice()) return false;
+      if (getAmount()
+          != other.getAmount()) return false;
+      if (getDiscount()
+          != other.getDiscount()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -376,13 +373,13 @@ public final class PayProto {
       hash = (53 * hash) + getCount();
       hash = (37 * hash) + PRICE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          java.lang.Double.doubleToLongBits(getPrice()));
+          getPrice());
       hash = (37 * hash) + AMOUNT_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          java.lang.Double.doubleToLongBits(getAmount()));
+          getAmount());
       hash = (37 * hash) + DISCOUNT_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          java.lang.Double.doubleToLongBits(getDiscount()));
+          getDiscount());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -522,11 +519,11 @@ public final class PayProto {
 
         count_ = 0;
 
-        price_ = 0D;
+        price_ = 0L;
 
-        amount_ = 0D;
+        amount_ = 0L;
 
-        discount_ = 0D;
+        discount_ = 0L;
 
         return this;
       }
@@ -618,13 +615,13 @@ public final class PayProto {
         if (other.getCount() != 0) {
           setCount(other.getCount());
         }
-        if (other.getPrice() != 0D) {
+        if (other.getPrice() != 0L) {
           setPrice(other.getPrice());
         }
-        if (other.getAmount() != 0D) {
+        if (other.getAmount() != 0L) {
           setAmount(other.getAmount());
         }
-        if (other.getDiscount() != 0D) {
+        if (other.getDiscount() != 0L) {
           setDiscount(other.getDiscount());
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -794,95 +791,95 @@ public final class PayProto {
         return this;
       }
 
-      private double price_ ;
+      private long price_ ;
       /**
-       * <code>double price = 4;</code>
+       * <code>uint64 price = 4;</code>
        * @return The price.
        */
       @java.lang.Override
-      public double getPrice() {
+      public long getPrice() {
         return price_;
       }
       /**
-       * <code>double price = 4;</code>
+       * <code>uint64 price = 4;</code>
        * @param value The price to set.
        * @return This builder for chaining.
        */
-      public Builder setPrice(double value) {
+      public Builder setPrice(long value) {
         
         price_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>double price = 4;</code>
+       * <code>uint64 price = 4;</code>
        * @return This builder for chaining.
        */
       public Builder clearPrice() {
         
-        price_ = 0D;
+        price_ = 0L;
         onChanged();
         return this;
       }
 
-      private double amount_ ;
+      private long amount_ ;
       /**
-       * <code>double amount = 5;</code>
+       * <code>uint64 amount = 5;</code>
        * @return The amount.
        */
       @java.lang.Override
-      public double getAmount() {
+      public long getAmount() {
         return amount_;
       }
       /**
-       * <code>double amount = 5;</code>
+       * <code>uint64 amount = 5;</code>
        * @param value The amount to set.
        * @return This builder for chaining.
        */
-      public Builder setAmount(double value) {
+      public Builder setAmount(long value) {
         
         amount_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>double amount = 5;</code>
+       * <code>uint64 amount = 5;</code>
        * @return This builder for chaining.
        */
       public Builder clearAmount() {
         
-        amount_ = 0D;
+        amount_ = 0L;
         onChanged();
         return this;
       }
 
-      private double discount_ ;
+      private long discount_ ;
       /**
-       * <code>double discount = 6;</code>
+       * <code>uint64 discount = 6;</code>
        * @return The discount.
        */
       @java.lang.Override
-      public double getDiscount() {
+      public long getDiscount() {
         return discount_;
       }
       /**
-       * <code>double discount = 6;</code>
+       * <code>uint64 discount = 6;</code>
        * @param value The discount to set.
        * @return This builder for chaining.
        */
-      public Builder setDiscount(double value) {
+      public Builder setDiscount(long value) {
         
         discount_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>double discount = 6;</code>
+       * <code>uint64 discount = 6;</code>
        * @return This builder for chaining.
        */
       public Builder clearDiscount() {
         
-        discount_ = 0D;
+        discount_ = 0L;
         onChanged();
         return this;
       }
@@ -2393,8 +2390,8 @@ public final class PayProto {
       "\n(dapr-demo-proto/src/main/proto/pay.pro" +
       "to\022\003pay\"p\n\nPayRequest\022\017\n\007orderId\030\001 \001(\004\022\021" +
       "\n\tproductId\030\002 \001(\t\022\r\n\005count\030\003 \001(\r\022\r\n\005pric" +
-      "e\030\004 \001(\001\022\016\n\006amount\030\005 \001(\001\022\020\n\010discount\030\006 \001(" +
-      "\001\",\n\013PayResponse\022\014\n\004code\030\001 \001(\t\022\017\n\007messag" +
+      "e\030\004 \001(\004\022\016\n\006amount\030\005 \001(\004\022\020\n\010discount\030\006 \001(" +
+      "\004\",\n\013PayResponse\022\014\n\004code\030\001 \001(\t\022\017\n\007messag" +
       "e\030\002 \001(\t\"<\n\010PayEvent\022\017\n\007orderId\030\001 \001(\004\022\016\n\006" +
       "status\030\002 \001(\r\022\017\n\007message\030\003 \001(\t28\n\nPayServ" +
       "ice\022*\n\003Pay\022\017.pay.PayRequest\032\020.pay.PayRes" +
