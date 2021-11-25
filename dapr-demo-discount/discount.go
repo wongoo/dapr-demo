@@ -27,13 +27,14 @@ import (
 	"github.com/wongoo/dapr-demo/dapr-demo-proto/discount_proto"
 )
 
+// grpc example, see https://github.com/dapr/go-sdk/blob/main/examples/service/serving/grpc/main.go
 func main() {
 	s, err := daprd.NewService(":5054")
 	if err != nil {
 		log.Fatalf("failed to start the server: %v", err)
 	}
 
-	if err = s.AddBindingInvocationHandler("calc", calcHandler); err != nil {
+	if err = s.AddServiceInvocationHandler("calc", calcHandler); err != nil {
 		log.Fatalf("error adding binding handler: %v", err)
 	}
 
@@ -42,11 +43,16 @@ func main() {
 	}
 
 }
-func calcHandler(ctx context.Context, in *common.BindingEvent) (out []byte, err error) {
-	log.Printf("binding - Data:%s, Meta:%v", in.Data, in.Metadata)
+
+func calcHandler(ctx context.Context, in *common.InvocationEvent) (out *common.Content, err error) {
+	log.Printf("binding - Data:%s, ContentType:%v", in.Data, in.ContentType)
 
 	req := &discount_proto.DiscountRequest{}
-	_ = proto.Unmarshal(in.Data, req)
+	err = proto.Unmarshal(in.Data, req)
+	if err != nil {
+		return
+	}
+
 	log.Printf("discount request, productId: %s, price: %d, count: %d", req.ProductId, req.Price, req.Count)
 
 	res := &discount_proto.DiscountResponse{
@@ -57,7 +63,17 @@ func calcHandler(ctx context.Context, in *common.BindingEvent) (out []byte, err 
 
 	log.Printf("discount response, discount: %d, code: %s, message: %s", res.Discount, res.Code, res.Message)
 
-	out, err = proto.Marshal(res)
+	var resData []byte
+	resData, err = proto.Marshal(res)
+	if err != nil {
+		return
+	}
+
+	out = &common.Content{
+		Data:        resData,
+		ContentType: in.ContentType,
+		DataTypeURL: in.DataTypeURL,
+	}
 
 	return
 }
