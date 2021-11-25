@@ -85,18 +85,19 @@ make proto-gen
 # install dapr
 wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O - | /bin/bash
 
-
+# dapr uninstall
 dapr init
 dapr --version
 # CLI version: 1.5.0
-# Runtime version: 1.4.3
+# Runtime version: 1.5.0
 
 
 docker ps
-# CONTAINER ID   IMAGE                    COMMAND                  CREATED         STATUS         PORTS                              NAMES
-# 0dda6684dc2e   openzipkin/zipkin        "/busybox/sh run.sh"     2 minutes ago   Up 2 minutes   9410/tcp, 0.0.0.0:9411->9411/tcp   dapr_zipkin
-# 9bf6ef339f50   redis                    "docker-entrypoint.s…"   2 minutes ago   Up 2 minutes   0.0.0.0:6379->6379/tcp             dapr_redis
-# 8d993e514150   daprio/dapr              "./placement"            2 minutes ago   Up 2 minutes   0.0.0.0:6050->50005/tcp            dapr_placement
+# CONTAINER ID   IMAGE               COMMAND                  CREATED              STATUS                PORTS                                                                     NAMES
+# f1307c1ce0e5   daprio/dapr:1.5.0   "./placement"            About a minute ago   Up About a minute     0.0.0.0:50005->50005/tcp, :::50005->50005/tcp                             dapr_placement
+# 8e5d3dd47ffb   c7ff196e79f0        "/docker-entrypoint.…"   6 weeks ago          Up 2 days             2888/tcp, 3888/tcp, 0.0.0.0:2181->2181/tcp, :::2181->2181/tcp, 8080/tcp   docker-zookeeper-1
+# 85ccf51ebab7   openzipkin/zipkin   "start-zipkin"           6 weeks ago          Up 2 days (healthy)   9410/tcp, 0.0.0.0:9411->9411/tcp, :::9411->9411/tcp                       dapr_zipkin
+# d77a655b668e   redis               "docker-entrypoint.s…"   6 weeks ago          Up 2 days             0.0.0.0:6379->6379/tcp, :::6379->6379/tcp                                 dapr_redis
 
 make build-golang build-java
 

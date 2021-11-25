@@ -23,30 +23,41 @@ import (
 
 	"github.com/dapr/go-sdk/service/common"
 	daprd "github.com/dapr/go-sdk/service/grpc"
+	"github.com/golang/protobuf/proto"
 	"github.com/wongoo/dapr-demo/dapr-demo-proto/discount_proto"
 )
 
 func main() {
-	// create a Dapr service server
 	s, err := daprd.NewService(":5054")
 	if err != nil {
 		log.Fatalf("failed to start the server: %v", err)
 	}
 
-	if err := s.AddBindingInvocationHandler("calc", calcHandler); err != nil {
+	if err = s.AddBindingInvocationHandler("calc", calcHandler); err != nil {
 		log.Fatalf("error adding binding handler: %v", err)
 	}
 
-	log.Println(discount_proto.DiscountRequest{})
-
-	// start the server
-	if err := s.Start(); err != nil {
+	if err = s.Start(); err != nil {
 		log.Fatalf("server error: %v", err)
 	}
-
 
 }
 func calcHandler(ctx context.Context, in *common.BindingEvent) (out []byte, err error) {
 	log.Printf("binding - Data:%s, Meta:%v", in.Data, in.Metadata)
-	return nil, nil
+
+	req := &discount_proto.DiscountRequest{}
+	_ = proto.Unmarshal(in.Data, req)
+	log.Printf("discount request, productId: %s, price: %d, count: %d", req.ProductId, req.Price, req.Count)
+
+	res := &discount_proto.DiscountResponse{
+		Discount: 99,
+		Code:     "0",
+		Message:  "success",
+	}
+
+	log.Printf("discount response, discount: %d, code: %s, message: %s", res.Discount, res.Code, res.Message)
+
+	out, err = proto.Marshal(res)
+
+	return
 }

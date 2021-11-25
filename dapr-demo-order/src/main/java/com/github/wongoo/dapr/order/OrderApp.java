@@ -118,6 +118,7 @@ public class OrderApp {
 
         log.info("discount response, code: {}, message: {}, discount: {}", response.getCode(), response.getMessage(),
             response.getDiscount());
+
         return response.getDiscount();
     }
 
