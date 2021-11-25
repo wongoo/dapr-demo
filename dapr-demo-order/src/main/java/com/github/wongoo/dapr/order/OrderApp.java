@@ -95,7 +95,7 @@ public class OrderApp {
                 .block();
 
         assert response != null;
-        long price = (long)response.get("price");
+        long price = Long.parseLong(response.get("price").toString());
 
         log.info("product {}, price: {}", productId, price);
 
