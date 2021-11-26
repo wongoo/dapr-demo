@@ -33,8 +33,8 @@ public class PayApp {
 
     public static void startGrpc() throws Exception {
         int port = 5052;
-        DaprPayService payService = new DaprPayService();
-        Server server = ServerBuilder.forPort(port).addService(payService).build().start();
+        DaprPayService service = new DaprPayService();
+        Server server = ServerBuilder.forPort(port).addService(service).build().start();
         log.info("Server: started listening on port {}", port);
 
         // Now we handle ctrl+c (or any other JVM shutdown)

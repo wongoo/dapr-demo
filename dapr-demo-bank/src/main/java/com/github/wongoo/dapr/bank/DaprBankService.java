@@ -59,6 +59,11 @@ public class DaprBankService extends AppCallbackGrpc.AppCallbackImplBase {
     @Override
     public void listTopicSubscriptions(Empty request,
         StreamObserver<DaprAppCallbackProtos.ListTopicSubscriptionsResponse> responseObserver) {
+        DaprAppCallbackProtos.ListTopicSubscriptionsResponse subscriptionsResponse =
+            DaprAppCallbackProtos.ListTopicSubscriptionsResponse.newBuilder().build();
+
+        responseObserver.onNext(subscriptionsResponse);
+        responseObserver.onCompleted();
     }
 
     /**
@@ -80,7 +85,7 @@ public class DaprBankService extends AppCallbackGrpc.AppCallbackImplBase {
                 responseObserver.onNext(responseBuilder.build());
             }
         } catch (InvalidProtocolBufferException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         } finally {
             responseObserver.onCompleted();
         }
@@ -103,7 +108,8 @@ public class DaprBankService extends AppCallbackGrpc.AppCallbackImplBase {
             }
 
             BankProto.TransEvent successEvent =
-                BankProto.TransEvent.newBuilder().setTransId(transId).setStatus(200).setMessage("trans success").build();
+                BankProto.TransEvent.newBuilder().setTransId(transId).setStatus(200).setMessage("trans success")
+                    .build();
             publishEvent(successEvent);
         }).start();
     }
@@ -122,7 +128,7 @@ public class DaprBankService extends AppCallbackGrpc.AppCallbackImplBase {
         log.info("publish trans event,data: {}", byteString);
 
         /*
-         * TODO: public proto Object will get error, so convert base64 string. SHOULD have better way.
+         * TODO: publish proto Object will get error, so convert base64 string. SHOULD have better way.
          */
         String base64 = Base64.getEncoder().encodeToString(byteString.toByteArray());
 

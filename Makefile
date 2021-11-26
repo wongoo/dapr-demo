@@ -26,9 +26,12 @@ build-java:
 
 build-golang:
 	mkdir -p dapr-demo-discount/target
-	cd dapr-demo-discount && go build -o target/discount discount.go
+	cd dapr-demo-discount && go build -ldflags '-extldflags "-static"' -o target/discount discount.go
 
-build-golang-docker: build-golang
+build: build-golang build-java
+
+# MUST call build-golang first
+build-golang-docker:
 	cp dapr-demo-discount/target/discount main
 	docker build -f docker/Dockerfile-golang . -t dapr-demo-discount:v1.0.0
 	rm -f main
@@ -39,7 +42,8 @@ define buildJavaDockerImage
 	rm -f app.jar
 endef
 
-build-java-docker: build-java
+# MUST call build-java first
+build-java-docker:
 	$(call buildJavaDockerImage,dapr-demo-product)
 	$(call buildJavaDockerImage,dapr-demo-order)
 	$(call buildJavaDockerImage,dapr-demo-pay)

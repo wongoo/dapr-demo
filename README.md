@@ -158,6 +158,11 @@ helm install redis bitnami/redis
 # export REDIS_PASSWORD=$(kubectl get secret --namespace default redis -o jsonpath="{.data.redis-password}" | base64 --decode)
 # see the Redis containers now running in your cluster
 kubectl get pods
+# NAME               READY   STATUS    RESTARTS      AGE
+# redis-master-0     1/1     Running   3 (27m ago)   27d
+# redis-replicas-0   1/1     Running   5 (27m ago)   27d
+# redis-replicas-1   1/1     Running   5 (27m ago)   27d
+# redis-replicas-2   1/1     Running   5 (27m ago)   27d
 
 cat <<EOF > redis-state.yaml 
 apiVersion: dapr.io/v1alpha1
@@ -199,11 +204,35 @@ EOF
 kubectl apply -f redis-state.yaml
 kubectl apply -f redis-pubsub.yaml
 
+kkubectl get components
+# NAME         AGE
+# pubsub       26d
+# statestore   26d
 ```
 
 build demo docker images:
 ```bash
+# ---------- MUST execute before eval minikube docker-env
+docker run --rm -v $(pwd):/projectdir \
+-v ${GOPATH}/src:/go/src \
+-v ${GOPATH}/pkg:/go/pkg \
+-w /projectdir \
+-e GOOS="linux" \
+-e GOARCH="amd64" \
+-e CGO_ENABLED=0 \
+-e GOPROXY=https://goproxy.cn \
+golang:1.17.3-buster \
+make build-golang
 
+docker run --rm -v $(pwd):/projectdir \
+-v ~/.m2:/root/.m2 \
+-w /projectdir \
+maven:3-openjdk-11 \
+mvn clean package
+```
+
+using packages build in previous step to build docker images:
+```bash
 # use minikube docker registry
 eval $(minikube -p minikube docker-env)
 # build project images

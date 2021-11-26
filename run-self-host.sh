@@ -1,4 +1,4 @@
-ps aux | grep -v grep | grep "dapr-demo"  | awk '{print $2}' | xargs --no-run-if-empty kill -9
+ps aux | grep -v grep | grep "daprd" | grep "dapr-demo"  | awk '{print $2}' | xargs --no-run-if-empty kill -9
 
 sleep 2
 
@@ -40,14 +40,14 @@ dapr run --app-id dapr-demo-discount --app-port 5054 \
 
 sleep 3
 
-# check product service
+echo  "check product service: "
 curl --location --request POST 'http://localhost:5051/get' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "productId": "123"
 }'
 
-# create order
+echo "create order: "
 curl --location --request POST 'http://localhost:5050/create' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -56,7 +56,8 @@ curl --location --request POST 'http://localhost:5050/create' \
 }'
 
 sleep 5
-
+echo "---------------------- discount log ----------------------"
+tail -n 20 discount.log
 echo "---------------------- product log ----------------------"
 tail -n 20 product.log
 echo "---------------------- pay log ----------------------"
@@ -65,5 +66,8 @@ echo "---------------------- bank log ----------------------"
 tail -n 40 bank.log
 echo "---------------------- order log ----------------------"
 tail -n 20 order.log
+
+
+ps aux | grep -v grep | grep "daprd" | grep "dapr-demo"  | awk '{print $2}' | xargs --no-run-if-empty kill -9
 
 echo "over"
