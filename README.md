@@ -1,4 +1,4 @@
-# Dapr Demo
+# Demo for Dapr v1.x
 
 ## 1. Demo Services
 
@@ -84,24 +84,25 @@ make proto-gen
 ```bash
 # install dapr
 wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O - | /bin/bash
+# or download directly: https://github.com/dapr/cli/releases/download/v1.6.0/dapr_darwin_amd64.tar.gz
 
 # dapr uninstall
 dapr init
 dapr --version
-# CLI version: 1.5.0
-# Runtime version: 1.5.0
+# CLI version: 1.6.0
+# Runtime version: 1.6.0
 
 
 docker ps
-# CONTAINER ID   IMAGE               COMMAND                  CREATED              STATUS                PORTS                                                                     NAMES
-# f1307c1ce0e5   daprio/dapr:1.5.0   "./placement"            About a minute ago   Up About a minute     0.0.0.0:50005->50005/tcp, :::50005->50005/tcp                             dapr_placement
-# 8e5d3dd47ffb   c7ff196e79f0        "/docker-entrypoint.…"   6 weeks ago          Up 2 days             2888/tcp, 3888/tcp, 0.0.0.0:2181->2181/tcp, :::2181->2181/tcp, 8080/tcp   docker-zookeeper-1
-# 85ccf51ebab7   openzipkin/zipkin   "start-zipkin"           6 weeks ago          Up 2 days (healthy)   9410/tcp, 0.0.0.0:9411->9411/tcp, :::9411->9411/tcp                       dapr_zipkin
-# d77a655b668e   redis               "docker-entrypoint.s…"   6 weeks ago          Up 2 days             0.0.0.0:6379->6379/tcp, :::6379->6379/tcp                                 dapr_redis
+#CONTAINER ID   IMAGE               COMMAND                  CREATED          STATUS                    PORTS                              NAMES
+#73627103ac9d   daprio/dapr:1.6.0   "./placement"            30 minutes ago   Up 30 minutes             0.0.0.0:50005->50005/tcp           dapr_placement
+#6ff1e82bd6f1   openzipkin/zipkin   "start-zipkin"           2 months ago     Up 37 minutes (healthy)   9410/tcp, 0.0.0.0:9411->9411/tcp   dapr_zipkin
+# 816b739bf523   redis               "docker-entrypoint.s…"   2 months ago     Up 37 minutes             0.0.0.0:6379->6379/tcp             dapr_redis
 
 make build-golang build-java
 
 sh run-self-host.sh
+
 ```
 
 ### 4.2. run dapr demo in kubernetes

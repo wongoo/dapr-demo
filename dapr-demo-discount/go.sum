@@ -11,8 +11,8 @@ github.com/cncf/udpa/go v0.0.0-20201120205902-5459f2c99403/go.mod h1:WmhPx2Nbnht
 github.com/cncf/xds/go v0.0.0-20210312221358-fbca930ec8ed/go.mod h1:eXthEFrGJvWHgFFCl3hGmgk+/aYT6PnTQLykKQRLhEs=
 github.com/dapr/dapr v1.6.0 h1:zc6/jHVkD4LkNosVM+PNVDPBnmwYqnXXPD7knvE9etU=
 github.com/dapr/dapr v1.6.0/go.mod h1:ilH7anASii1b6hBRy2GTmf63Kj1/ejjaN9GcQJ2z5R8=
-github.com/dapr/go-sdk v1.3.1-0.20220125034144-69c6adcdb0dc h1:pAT1N84IGNYIISqufIoHnw2WlxnQf2Yfjz8843Ez06A=
-github.com/dapr/go-sdk v1.3.1-0.20220125034144-69c6adcdb0dc/go.mod h1:tFH/t0z3qypmk5CXHvYSjf/1dGVi04voXfNnhbGgy/A=
+github.com/dapr/go-sdk v1.3.1 h1:VI7vp3ZwZu+O8k9vPZ0gTTCRywj+ZsLm7MIQqB9S7FU=
+github.com/dapr/go-sdk v1.3.1/go.mod h1:tFH/t0z3qypmk5CXHvYSjf/1dGVi04voXfNnhbGgy/A=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=

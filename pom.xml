@@ -38,11 +38,6 @@
             </dependency>
             <dependency>
                 <groupId>io.dapr</groupId>
-                <artifactId>dapr-sdk-springboot</artifactId>
-                <version>${dapr.sdk.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.dapr</groupId>
                 <artifactId>dapr-sdk-autogen</artifactId>
                 <version>${dapr.sdk.version}</version>
             </dependency>

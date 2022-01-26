@@ -1,4 +1,4 @@
-ps aux | grep -v grep | grep "daprd" | grep "dapr-demo"  | awk '{print $2}' | xargs --no-run-if-empty kill -9
+ps aux | grep -v grep | grep "daprd" | grep "dapr-demo"  | awk '{print $2}' | xargs kill -9
 
 sleep 2
 
@@ -68,6 +68,6 @@ echo "---------------------- order log ----------------------"
 tail -n 20 order.log
 
 
-ps aux | grep -v grep | grep "daprd" | grep "dapr-demo"  | awk '{print $2}' | xargs --no-run-if-empty kill -9
+ps aux | grep -v grep | grep "daprd" | grep "dapr-demo"  | awk '{print $2}' | xargs kill -9
 
 echo "over"

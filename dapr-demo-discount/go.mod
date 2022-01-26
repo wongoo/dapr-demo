@@ -2,7 +2,7 @@ module github.com/wongoo/dapr-demo/dapr-demo-discount
 
 go 1.18
 
-require github.com/dapr/go-sdk v1.3.1-0.20220125034144-69c6adcdb0dc
+require github.com/dapr/go-sdk v1.3.1
 
 require github.com/dapr/dapr v1.6.0 // indirect
 
